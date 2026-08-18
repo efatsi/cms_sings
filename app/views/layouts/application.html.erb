@@ -12,6 +12,15 @@
 
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <% if embed_mode? %>
+      <script>
+        document.addEventListener("turbo:before-visit", function(event) {
+          var url = new URL(event.detail.url);
+          url.searchParams.set("embed", "true");
+          event.detail.url = url.toString();
+        });
+      </script>
+    <% end %>
   </head>
 
   <body class="min-h-screen" style="background-color: #f4ede0; font-family: 'Open Sans', sans-serif;">
