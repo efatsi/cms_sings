@@ -54,6 +54,6 @@ class DriveSyncService
 
   def credentials_path
     ENV["GOOGLE_APPLICATION_CREDENTIALS"] ||
-      Rails.root.join("../../cm-bot/config/service-account.json").to_s
+      Rails.root.join("../cm-bot/config/service-account.json").to_s
   end
 end

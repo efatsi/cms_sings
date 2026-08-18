@@ -62,3 +62,5 @@ group :development do
   gem "web-console"
   gem "annotaterb"
 end
+
+gem "dockerfile-rails", ">= 1.7", :group => :development

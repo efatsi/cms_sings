@@ -24,4 +24,8 @@ class Track < ApplicationRecord
   def display_name
     name.sub(/^\d+\s+/, "").sub(/\.m4a$/i, "")
   end
+
+  def public_url
+    "https://drive.google.com/uc?export=download&id=#{drive_file_id}&confirm=t"
+  end
 end

@@ -4,25 +4,10 @@ class TracksController < ApplicationController
   def stream
     track = Track.find(params[:id])
 
-    token = Rails.cache.fetch("google_access_token", expires_in: 55.minutes) do
-      credentials = Google::Auth::ServiceAccountCredentials.make_creds(
-        json_key_io: File.open(credentials_path),
-        scope: "https://www.googleapis.com/auth/drive.readonly"
-      )
-      credentials.fetch_access_token!["access_token"]
-    end
+    uri = URI(track.public_url)
+    drive_response = fetch_with_redirects(uri)
 
-    uri = URI("https://www.googleapis.com/drive/v3/files/#{track.drive_file_id}?alt=media")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-
-    req = Net::HTTP::Get.new(uri)
-    req["Authorization"] = "Bearer #{token}"
-    req["Range"] = request.headers["Range"] if request.headers["Range"].present?
-
-    drive_response = http.request(req)
-
-    response.status = drive_response.code.to_i
+    self.status = drive_response.code.to_i
     response.headers["Content-Type"] = drive_response["Content-Type"] || "audio/x-m4a"
     response.headers["Accept-Ranges"] = "bytes"
     response.headers["Content-Length"] = drive_response["Content-Length"] if drive_response["Content-Length"]
@@ -34,8 +19,21 @@ class TracksController < ApplicationController
 
   private
 
-  def credentials_path
-    ENV["GOOGLE_APPLICATION_CREDENTIALS"] ||
-      Rails.root.join("../../cm-bot/config/service-account.json").to_s
+  def fetch_with_redirects(uri, limit = 5)
+    raise "Too many redirects" if limit == 0
+
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = uri.scheme == "https"
+
+    req = Net::HTTP::Get.new(uri)
+    req["Range"] = request.headers["Range"] if request.headers["Range"].present?
+
+    resp = http.request(req)
+
+    if resp.is_a?(Net::HTTPRedirection)
+      fetch_with_redirects(URI(resp["location"]), limit - 1)
+    else
+      resp
+    end
   end
 end
