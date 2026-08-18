@@ -14,11 +14,20 @@
     <%= javascript_importmap_tags %>
     <% if embed_mode? %>
       <script>
-        document.addEventListener("turbo:before-visit", function(event) {
-          var url = new URL(event.detail.url);
-          url.searchParams.set("embed", "true");
-          event.detail.url = url.toString();
-        });
+        function addEmbedParam() {
+          document.querySelectorAll("a[href]").forEach(function(link) {
+            try {
+              var url = new URL(link.href, window.location.href);
+              if (url.origin === window.location.origin) {
+                url.searchParams.set("embed", "true");
+                link.href = url.toString();
+              }
+            } catch(e) {}
+          });
+        }
+        document.addEventListener("DOMContentLoaded", addEmbedParam);
+        document.addEventListener("turbo:load", addEmbedParam);
+        document.addEventListener("turbo:render", addEmbedParam);
       </script>
     <% end %>
   </head>
