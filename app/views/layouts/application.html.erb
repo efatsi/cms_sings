@@ -15,13 +15,15 @@
   </head>
 
   <body class="min-h-screen" style="background-color: #f4ede0; font-family: 'Open Sans', sans-serif;">
-    <nav class="py-4 px-6 border-b border-opacity-20" style="background-color: #537326; border-color: rgba(255,255,255,0.2);">
-      <div class="max-w-3xl mx-auto flex items-center justify-between">
-        <%= link_to root_path, class: "text-white no-underline" do %>
-          <span class="text-xl font-semibold" style="font-family: 'Lora', serif;">Camp Songs</span>
-        <% end %>
-      </div>
-    </nav>
+    <% unless embed_mode? %>
+      <nav class="py-4 px-6 border-b border-opacity-20" style="background-color: #537326; border-color: rgba(255,255,255,0.2);">
+        <div class="max-w-3xl mx-auto flex items-center justify-between">
+          <%= link_to root_path, class: "text-white no-underline" do %>
+            <span class="text-xl font-semibold" style="font-family: 'Lora', serif;">Camp Songs</span>
+          <% end %>
+        </div>
+      </nav>
+    <% end %>
 
     <main class="max-w-3xl mx-auto px-6 py-8">
       <%= yield %>
