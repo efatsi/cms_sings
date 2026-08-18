@@ -1,0 +1,29 @@
+name: Sync Google Drive
+
+on:
+  schedule:
+    - cron: "0 8 * * *"  # Daily at 8am UTC
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Write service account credentials
+        run: echo "$GOOGLE_APPLICATION_CREDENTIALS_JSON" > /tmp/service-account.json
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+
+      - name: Sync Google Drive
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          RAILS_ENV: production
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/service-account.json
+        run: bundle exec rails drive:sync

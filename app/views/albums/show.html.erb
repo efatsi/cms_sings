@@ -1,0 +1,65 @@
+<div data-controller="player">
+  <%# Hidden audio element %>
+  <audio data-player-target="audio"
+         data-action="ended->player#ended"
+         class="hidden"></audio>
+
+  <%# Header %>
+  <div class="flex items-start justify-between mb-6 gap-4">
+    <div>
+      <%= link_to albums_path, class: "text-sm mb-2 inline-flex items-center gap-1 no-underline hover:underline" style="color: #537326;" do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        All albums
+      <% end %>
+      <h1 class="text-2xl font-semibold" style="font-family: 'Lora', serif; color: #537326;"><%= @album.name %></h1>
+      <p class="text-sm text-stone-500 mt-1"><%= @tracks.count %> tracks</p>
+    </div>
+
+    <%# Autoplay toggle %>
+    <div class="flex items-center gap-2 mt-1 shrink-0">
+      <span class="text-sm text-stone-500">Autoplay</span>
+      <button data-player-target="autoplayToggle"
+              data-action="click->player#toggleAutoplay"
+              class="relative inline-flex items-center w-10 h-6 rounded-full transition-colors focus:outline-none"
+              style="background-color: #537326;"
+              title="Toggle autoplay">
+        <span data-player-target="toggleKnob"
+              class="inline-block w-4 h-4 bg-white rounded-full shadow transition-transform translate-x-5"></span>
+      </button>
+    </div>
+  </div>
+
+  <%# Track list %>
+  <div class="rounded-xl border border-amber-200 overflow-hidden bg-white bg-opacity-50">
+    <% @tracks.each do |track| %>
+      <div class="flex items-center border-b border-amber-100 last:border-b-0 cursor-pointer transition-colors
+                  hover:bg-amber-50"
+           data-player-target="row"
+           data-track-id="<%= track.id %>"
+           data-stream-url="<%= stream_track_path(track) %>"
+           data-action="click->player#play">
+        <%# Play button %>
+        <div class="w-12 flex items-center justify-center shrink-0 py-3">
+          <svg data-player-target="playIcon" class="w-5 h-5 text-stone-400" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <svg data-player-target="pauseIcon" class="w-5 h-5 hidden" style="color: #537326;" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+          </svg>
+        </div>
+
+        <%# Track name %>
+        <div class="flex-1 py-3 pr-4">
+          <span class="text-sm" data-player-target="trackName"><%= track.display_name %></span>
+        </div>
+
+        <%# Track number %>
+        <div class="w-8 text-right pr-4 text-xs text-stone-400 shrink-0">
+          <%= track.position + 1 %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

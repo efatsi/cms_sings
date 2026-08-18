@@ -1,0 +1,17 @@
+<h1 class="text-3xl font-semibold mb-8" style="font-family: 'Lora', serif; color: #537326;">Albums</h1>
+
+<div class="grid gap-4">
+  <% @albums.each do |album| %>
+    <%= link_to album_path(album), class: "block rounded-xl p-6 border border-amber-200 bg-white bg-opacity-60 hover:bg-opacity-90 transition-all shadow-sm hover:shadow-md no-underline group" do %>
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-semibold group-hover:underline" style="font-family: 'Lora', serif; color: #537326;"><%= album.name %></h2>
+          <p class="text-sm mt-1 text-stone-500"><%= album.tracks.count %> tracks</p>
+        </div>
+        <svg class="w-6 h-6 text-stone-400 group-hover:text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </div>
+    <% end %>
+  <% end %>
+</div>
